@@ -1,3 +1,9 @@
 /.pre-commit-config.yaml
 /result
 /target
+
+# ProgramBench course-competition artifacts
+executable
+.programbench/venv/
+.programbench/tests/
+.programbench/run/

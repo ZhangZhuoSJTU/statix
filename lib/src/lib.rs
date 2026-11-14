@@ -5,8 +5,11 @@ mod utils;
 
 pub use lints::LINTS;
 
-use rnix::{SyntaxElement, SyntaxKind, TextRange, parser::ParseError};
 use std::{convert::Into, default::Default};
+use rnix::parser::ParseError;
+use rnix::SyntaxElement;
+use rnix::SyntaxKind;
+use rnix::TextRange;
 
 #[cfg(feature = "json-out")]
 use serde::{
@@ -111,6 +114,12 @@ impl Report {
             _ => panic!("report a bug, pepper forgot to handle a parse error"),
         };
         let mut message = err.to_string();
+	if message.ends_with("\n") {
+            message = message.trim_end().to_string();
+	}
+	if message.contains("TOKEN_AT") || message.contains("TOKEN_DOLLAR") {
+            message = String::new(); 
+        }
         message
             .as_mut_str()
             .get_mut(0..1)

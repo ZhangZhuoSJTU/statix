@@ -40,14 +40,19 @@ impl Rule for BoolComparison {
             return None;
         };
         let bin_expr = BinOp::cast(node.clone())?;
-        let (lhs, rhs) = (bin_expr.lhs()?, bin_expr.rhs()?);
-        let (lhs, rhs) = (lhs.syntax(), rhs.syntax());
-        let op = EqualityBinOpKind::try_from(bin_expr.operator()?)?;
+	let lhs_node = bin_expr.lhs()?;
+        let rhs_node = bin_expr.rhs()?;
+        let lhs = lhs_node.syntax();
+        let rhs = rhs_node.syntax();
+	let op = EqualityBinOpKind::try_from(bin_expr.operator()?)?;
 
         let (bool_side, non_bool_side): (NixBoolean, &SyntaxNode) =
             match (boolean_ident(lhs), boolean_ident(rhs)) {
+		// Neither side is a boolean, no comparison to make
                 (None, None) => return None,
+		// Only the right side is a boolean
                 (None, Some(bool)) => (bool, lhs),
+		// Only the left side is a boolean
                 (Some(bool), _) => (bool, rhs),
             };
 
